@@ -11,9 +11,11 @@ interface Training {
 const calculateExercises = (daily: number[], target: number): Training => {
     const daysTrained = daily.length;
     const trainingTotal = daily.reduce((total, current) => total + current);
-    console.log("total", trainingTotal)
+    const trainingDays = daily.reduce((trained, current) => current == 0 ? trained : trained + 1);
     const average = trainingTotal / daysTrained;
     const percentageOfTarget = (average / target) * 100;
+    const success = average > target ? true : false;
+
 
     let rating = 3;
     let ratingDescription = 'not too bad but could be better';
@@ -27,8 +29,8 @@ const calculateExercises = (daily: number[], target: number): Training => {
 
     return {
         periodLength: daysTrained,
-        trainingDays: daily.reduce((trained, current) => current == 0 ? trained : trained + 1),
-        success: average > target ? true : false,
+        trainingDays: trainingDays,
+        success: success,
         rating: rating,
         ratingDescription: ratingDescription,
         target: target,
