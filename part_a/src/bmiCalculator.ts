@@ -11,4 +11,6 @@ export const calculateBmi = (height: number, weight: number) : string => {
     return "Obese";
 };
 
-console.log(calculateBmi(parseInt(process.argv[2]), parseInt(process.argv[3])));
+if (process.argv[2]) {
+    console.log(calculateBmi(parseInt(process.argv[2]), parseInt(process.argv[3])));
+}

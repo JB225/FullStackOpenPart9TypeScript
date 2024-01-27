@@ -8,10 +8,10 @@ interface Training {
     average: number
 }
 
-const calculateExercises = (daily: number[], target: number): Training => {
+export const calculateExercises = (daily: number[], target: number): Training => {
     const daysTrained = daily.length;
-    const trainingTotal = daily.reduce((total, current) => total + current);
-    const trainingDays = daily.reduce((trained, current) => current == 0 ? trained : trained + 1);
+    const trainingTotal = daily.reduce((total, current) => total + current, 0);
+    const trainingDays = daily.reduce((trained, current) => current == 0 ? trained : trained + 1, 0);
     const average = trainingTotal / daysTrained;
     const percentageOfTarget = (average / target) * 100;
     const success = average > target ? true : false;
@@ -38,8 +38,8 @@ const calculateExercises = (daily: number[], target: number): Training => {
     };
 };
 
-
-const target = parseInt(process.argv[2]);
-const daily = process.argv.slice(3).map(hours => +hours);
-
-console.log(calculateExercises(daily, target));
+if (process.argv[2]) {
+    const target = parseInt(process.argv[2]);
+    const daily = process.argv.slice(3).map(hours => +hours);
+    console.log(calculateExercises(daily, target));
+}
