@@ -11,9 +11,13 @@ const App = () => {
     getAllDiaries().then(data => setEntries(data));
   });
 
+  const addDiaryEntry = ((entryToAdd : DiaryEntry) => {
+    setEntries(entries.concat(entryToAdd));
+  });
+
   return (
     <div>
-      <NewDiaryEntryForm />
+      <NewDiaryEntryForm addDiaryEntry={addDiaryEntry} />
       <br/>
       <DiaryEntries entries={entries}/>
     </div>
