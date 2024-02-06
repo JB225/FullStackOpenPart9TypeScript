@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { DiaryEntry, NewDiaryEntry, Visibility, Weather } from "../types";
 import { createDiaryEntry } from "../Services/diaryService";
 
-const NewDiaryEntryForm = ({ addDiaryEntry } : {addDiaryEntry: (entry: DiaryEntry) => void}) => {
+const NewDiaryEntryForm = ({ addDiaryEntry, errorMessageHandler } : 
+    {addDiaryEntry: (entry: DiaryEntry) => void; 
+      errorMessageHandler : (error: string) => void}) => {
   const [dateInput, setDate] = useState("");
   const [visibilityInput, setVisiblity] = useState("");
   const [weatherInput, setWeather] = useState("");
@@ -17,8 +19,8 @@ const NewDiaryEntryForm = ({ addDiaryEntry } : {addDiaryEntry: (entry: DiaryEntr
       comment: commentInput
     };
 
-    createDiaryEntry(diaryInput).then(data => {
-      addDiaryEntry(data);
+    createDiaryEntry(diaryInput, errorMessageHandler).then(data => {
+      addDiaryEntry(data as DiaryEntry);
     });
 
     setDate("");
@@ -32,10 +34,14 @@ const NewDiaryEntryForm = ({ addDiaryEntry } : {addDiaryEntry: (entry: DiaryEntr
       <header><b>Add diary entry</b></header><br/>
       <form onSubmit={handleSubmit}>
         <label>
-            date <input type="text" value={dateInput} onChange={(event) => setDate(event.target.value)}/>
+            date <input type="date" value={dateInput} onChange={(event) => setDate(event.target.value)} />
         </label><br/>
         <label>
-            visibility <input type="text" value={visibilityInput} onChange={(event) => setVisiblity(event.target.value)}/>
+            visibility 
+          {/* TODO: Add Radio Buttons */}
+          <input type="radio" id="visiblity1" name="visibility" value="great" />
+          <label>visibility</label>
+          {/* <input type="text" value={visibilityInput} onChange={(event) => setVisiblity(event.target.value)}/> */}
         </label><br/>
         <label>
             weather <input type="text" value={weatherInput} onChange={(event) => setWeather(event.target.value)}/>

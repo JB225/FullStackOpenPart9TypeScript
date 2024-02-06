@@ -8,13 +8,14 @@ export const getAllDiaries = async () => {
   return response.data;
 };
 
-export const createDiaryEntry = async (object: NewDiaryEntry) => {
+export const createDiaryEntry = async (object: NewDiaryEntry, errorMessageHandler : (error: string) => void) => {
   try{
     const response = await axios.post<DiaryEntry>(baseURL, object);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
       console.log("error:", error.response?.request.responseText);
+      errorMessageHandler(error.response?.request.responseText);
     } else {
       console.error(error);
     }
