@@ -36,16 +36,21 @@ const NewDiaryEntryForm = ({ addDiaryEntry, errorMessageHandler } :
         <label>
             date <input type="date" value={dateInput} onChange={(event) => setDate(event.target.value)} />
         </label><br/>
-        <label>
+        <div onChange={(event) => setVisiblity((event.target as HTMLInputElement).value)}>
             visibility 
-          {/* TODO: Add Radio Buttons */}
-          <input type="radio" id="visiblity1" name="visibility" value="great" />
-          <label>visibility</label>
-          {/* <input type="text" value={visibilityInput} onChange={(event) => setVisiblity(event.target.value)}/> */}
-        </label><br/>
-        <label>
-            weather <input type="text" value={weatherInput} onChange={(event) => setWeather(event.target.value)}/>
-        </label><br/>
+          <input type="radio" name="visibility" value="great"/> great
+          <input type="radio" name="visibility" value="good" /> good
+          <input type="radio" name="visibility" value="ok" /> ok
+          <input type="radio" name="visibility" value="poor" /> poor
+        </div>
+        <div onChange={(event) => setWeather((event.target as HTMLInputElement).value)}>
+            weather 
+          <input type="radio" name="weather" value="sunny"/> sunny
+          <input type="radio" name="weather" value="rainy" /> rainy
+          <input type="radio" name="weather" value="cloudy" /> cloudy
+          <input type="radio" name="weather" value="stormy" /> stormy
+          <input type="radio" name="weather" value="windy" /> windy
+        </div>
         <label>
             comment <input type="text" value={commentInput} onChange={(event) => setComment(event.target.value)}/>
         </label>
