@@ -10,8 +10,16 @@ const patients: Patient [] = patientData.map(obj => {
   });
 
 const getPatients = (): Omit<Patient, 'ssn'>[] => {
-    return patients.map(({id, name, gender, dateOfBirth, occupation}) => ({
-        id , name, gender, dateOfBirth, occupation}));
+    return patients.map(({id, name, gender, dateOfBirth, occupation, entries}) => ({
+        id , name, gender, dateOfBirth, occupation, entries}));
+};
+
+const getPatient = (id: string): Omit<Patient, 'ssn'> => {
+    const filteredPatients = patients.filter(p => p.id === id);
+    if (filteredPatients.length > 1 || filteredPatients.length === 0) {
+        throw new Error("No patient matching the id given has been found");
+    }
+    return patients.filter(p => p.id === id)[0];
 };
 
 const addPatient = (patient: newPatient): Patient => {
@@ -26,5 +34,6 @@ const addPatient = (patient: newPatient): Patient => {
 
 export default {
     getPatients,
+    getPatient,
     addPatient
 };
