@@ -15,11 +15,11 @@ const getPatients = (): Omit<Patient, 'ssn'>[] => {
 };
 
 const getPatient = (id: string): Omit<Patient, 'ssn'> => {
-    const filteredPatients = patients.filter(p => p.id === id);
-    if (filteredPatients.length > 1 || filteredPatients.length === 0) {
+    const patient = patients.find(p => p.id === id);
+    if (!patient) {
         throw new Error("No patient matching the id given has been found");
     }
-    return patients.filter(p => p.id === id)[0];
+    return patient;
 };
 
 const addPatient = (patient: newPatient): Patient => {
