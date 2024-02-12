@@ -1,4 +1,4 @@
-import { Gender, newPatient } from "./types";
+import { Entry, Gender, newPatient } from "./types";
 
 const toNewPatient = (object: unknown): newPatient => {
         if (!object || typeof object !== 'object') {
@@ -6,7 +6,8 @@ const toNewPatient = (object: unknown): newPatient => {
         }
 
         if ('name' in object && 'dateOfBirth' in object 
-            && 'ssn' in object && 'gender' in object && 'occupation' in object) {
+            && 'ssn' in object && 'gender' in object 
+            && 'occupation' in object && 'entries' in object) {
 
             const newEntry: newPatient = {
                 name: parseName(object.name),
@@ -14,7 +15,7 @@ const toNewPatient = (object: unknown): newPatient => {
                 ssn: parseSSN(object.ssn),
                 gender: parseGender(object.gender),
                 occupation: parseOccupation(object.occupation),
-                entries: []
+                entries: parseEntries(object.entries)
             };
 
             return newEntry;
@@ -53,9 +54,16 @@ const parseGender = (gender: unknown): Gender => {
 
 const parseOccupation = (occupation: unknown): string => {
     if (!occupation || !isString(occupation)) {
-        throw new Error('Inccorect or missing occupation');
+        throw new Error('Incorrect or missing occupation');
     }
     return occupation;
+};
+
+const parseEntries = (entries: unknown): Entry[] => {
+    if (!entries || !isEntryArray(entries)) {
+        throw new Error('Incorrect or missing entries');
+    }
+    return entries;
 };
 
 const isString = (text: unknown): text is string => {
@@ -64,6 +72,18 @@ const isString = (text: unknown): text is string => {
 
 const isGender = (gender: string): gender is Gender => {
     return Object.values(Gender).map(v => v.toString()).includes(gender);
+};
+
+const isEntryArray = (entries: unknown): entries is Entry[] => {
+    if (!Array.isArray(entries)) {
+        throw new Error ('Incorrect or missing entries');
+    }
+    return entries.every(e => isEntry(e));
+};
+
+const isEntry = (entry: unknown): entry is {Entry: unknown} => {
+    return typeof entry === 'object' && entry !== null && 'type' in entry && (entry.type === 'Hospital' ||  
+        entry.type === 'OccupationalHealthcare' || entry.type === 'HealthCheck');
 };
 
 export default toNewPatient;

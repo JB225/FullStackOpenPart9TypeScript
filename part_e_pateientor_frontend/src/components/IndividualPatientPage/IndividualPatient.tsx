@@ -1,13 +1,16 @@
 import { useParams } from "react-router-dom";
-import { Patient, Gender } from "../../types";
-// import MaleIcon from '@mui/icons-material/Male';
+import { Patient, Gender, Diagnosis } from "../../types";
 import patientService from "../../services/patients";
 import { useEffect, useState } from "react";
 import { Male, Female, Transgender } from "@mui/icons-material";
 import { Typography } from "@mui/material";
+import PatientEntry from "./PatientEntry";
+import diagnosisService from "../../services/diagnoses";
 
 const IndividualPatient = () => {
-    const [patient, setPatient] = useState<Patient>({} as Patient);
+    const [patient, setPatient] = useState<Patient>({id: '', name: '', dateOfBirth: '', ssn: '',
+        gender: Gender.Other, occupation: '', entries: []});
+    const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
     const id: string = useParams().id as string;
 
     useEffect(() => {
@@ -15,8 +18,15 @@ const IndividualPatient = () => {
             const patient: Patient = await patientService.getPatient(id);
             setPatient(patient);
         };
-        fetchPatient();
-    });
+        void fetchPatient();
+
+        const fetchDiagnoses = async () => {
+            const diagnosesData: Diagnosis[] = await diagnosisService.getAll();
+            setDiagnoses(diagnosesData);
+        };
+        void fetchDiagnoses();
+
+    }, [id]);
 
     return (
         <div>
@@ -30,8 +40,9 @@ const IndividualPatient = () => {
             } [patient.gender]}
             </Typography><br/>
             <div>ssn: {patient.ssn}</div>
-            <div>occupation: {patient.occupation}</div>
-
+            <div>occupation: {patient.occupation}</div><br/>
+            <Typography variant="h5">entries</Typography><br/>
+            {patient.entries.map(e => <PatientEntry key={e.id} entry={e} diagnoses={diagnoses}/>)}
         </div>
     );
 };
