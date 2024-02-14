@@ -19,4 +19,10 @@ router.post('/', (req, res) => {
     res.send(newPatientAdded);
 });
 
+// TODO: Implement typechecking for entries then add method to the service
+// router.post('/:id/entries', (req, res) => {
+//     const newEntryData: EntryWithoutId = toNewEntry(req.body);
+
+// })
+
 export default router;

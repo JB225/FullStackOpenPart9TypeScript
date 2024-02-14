@@ -45,7 +45,7 @@ export type Discharge = {
   criteria: string
 };
 
-interface OccupationalHealthcareEntry extends BaseEntry {
+export interface OccupationalHealthcareEntry extends BaseEntry {
   type: 'OccupationalHealthcare',
   employerName: string,
   description: string,
@@ -57,7 +57,7 @@ export type SickLeave = {
   endDate: string
 };
 
-interface HealthCheckEntry extends BaseEntry {
+export interface HealthCheckEntry extends BaseEntry {
 type: 'HealthCheck';
 healthCheckRating: HealthCheckRating;
 }

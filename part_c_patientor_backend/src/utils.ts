@@ -21,8 +21,28 @@ const toNewPatient = (object: unknown): newPatient => {
             return newEntry;
         }
         throw new Error('Incorrect data: some fields are missing');
-
 };
+
+
+// TODO: Type Check Entries
+// const toNewEntry = (object: unknown): EntryWithoutId => {
+//     if (!object || typeof object !== 'object') {
+//         throw new Error('Incorrect or missing data');
+//     }
+
+//     if ('description' in object && 'date' in object && 'specialist' in object && 'type' in object) {
+//         switch (object.type) {
+//             case 'OccupationalHealthcare':
+//                 return parseOccupationalHealthcareEntry(object);
+//             case 'HealthCheck':
+//                 return parseHealthCheckEntry(obejct);
+//             case 'Hosptial':
+//                 return parseHospitalEntry(object);
+//             default:
+//                 return assertNever(object);
+//         }
+//     }
+// };
 
 const parseName = (name: unknown): string => {
     if (!name || !isString(name)) {
@@ -85,5 +105,17 @@ const isEntry = (entry: unknown): entry is {Entry: unknown} => {
     return typeof entry === 'object' && entry !== null && 'type' in entry && (entry.type === 'Hospital' ||  
         entry.type === 'OccupationalHealthcare' || entry.type === 'HealthCheck');
 };
+
+// const parseOccupationalHealthcareEntry = (entry: unknown): entry is OccupationalHealthcareEntry => {
+//     if ('employerName' in entry) {
+
+//     }
+// }
+
+// const assertNever = (value: never): never => {
+//     throw new Error(
+//       `Unhandled discriminated union member: ${JSON.stringify(value)}`
+//     );
+//   };
 
 export default toNewPatient;
