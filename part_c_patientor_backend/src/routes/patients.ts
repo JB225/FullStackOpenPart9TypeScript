@@ -1,7 +1,7 @@
 import express from 'express';
 import patientsService from '../services/patientsService';
-import toNewPatient from '../utils';
 import { Patient, newPatient } from '../types';
+import { toNewEntry, toNewPatient } from '../utils';
 
 const router = express.Router();
 
@@ -19,10 +19,9 @@ router.post('/', (req, res) => {
     res.send(newPatientAdded);
 });
 
-// TODO: Implement typechecking for entries then add method to the service
-// router.post('/:id/entries', (req, res) => {
-//     const newEntryData: EntryWithoutId = toNewEntry(req.body);
+router.post('/:id/entries', (req, res) => {
+    const newEntryData: EntryWithoutId = toNewEntry(req.body);
 
-// })
+});
 
 export default router;
