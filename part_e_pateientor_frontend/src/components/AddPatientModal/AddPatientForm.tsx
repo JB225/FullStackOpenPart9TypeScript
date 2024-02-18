@@ -83,14 +83,14 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
           value={gender}
           onChange={onGenderChange}
         >
-        {genderOptions.map(option =>
-          <MenuItem
-            key={option.label}
-            value={option.value}
-          >
-            {option.label
-          }</MenuItem>
-        )}
+          {genderOptions.map(option =>
+            <MenuItem
+              key={option.label}
+              value={option.value}
+            >
+              {option.label
+              }</MenuItem>
+          )}
         </Select>
 
         <Grid>

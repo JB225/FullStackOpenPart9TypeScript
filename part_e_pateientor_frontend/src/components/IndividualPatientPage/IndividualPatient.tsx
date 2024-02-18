@@ -5,10 +5,11 @@ import { useEffect, useState } from "react";
 import { Male, Female, Transgender } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 import diagnosisService from "../../services/diagnoses";
-import HospitalEntry from "./HospitalEntry";
-import OccupationalHealthCheck from "./OccupationalHealthCheck";
-import HealthCheck from "./HealthCheck";
+import HospitalEntry from "./Entry/HospitalEntry";
+import OccupationalHealthCheck from "./Entry/OccupationalHealthCheck";
+import HealthCheck from "./Entry/HealthCheck";
 import { assertNever } from "../../utils";
+import EntryForm from "./EntryForm";
 
 const IndividualPatient = () => {
   const [patient, setPatient] = useState<Patient>({id: '', name: '', dateOfBirth: '', ssn: '',
@@ -34,11 +35,11 @@ const IndividualPatient = () => {
   const entryComponent = (entry: Entry) => {
     switch(entry.type) {
     case "Hospital":
-      return <HospitalEntry entry={entry} diagnoses={diagnoses}/>;
+      return <HospitalEntry entry={entry} diagnoses={diagnoses} key={entry.id}/>;
     case "OccupationalHealthcare":
-      return <OccupationalHealthCheck entry={entry} diagnoses={diagnoses}/>;
+      return <OccupationalHealthCheck entry={entry} diagnoses={diagnoses} key={entry.id}/>;
     case "HealthCheck":
-      return <HealthCheck entry={entry} diagnoses={diagnoses}/>;
+      return <HealthCheck entry={entry} diagnoses={diagnoses} key={entry.id}/>;
     default:
       return assertNever(entry);
     }
@@ -57,6 +58,9 @@ const IndividualPatient = () => {
       </Typography><br/>
       <div>ssn: {patient.ssn}</div>
       <div>occupation: {patient.occupation}</div><br/>
+
+      <EntryForm />
+
       <Typography variant="h5">entries</Typography><br/>
       {patient.entries.map(e => entryComponent(e))}
     </div>

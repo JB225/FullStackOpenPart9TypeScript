@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@mui/material";
-import { Diagnosis, HealthCheckEntry, HealthCheckRating } from "../../types";
+import { Diagnosis, HealthCheckEntry, HealthCheckRating } from "../../../types";
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 

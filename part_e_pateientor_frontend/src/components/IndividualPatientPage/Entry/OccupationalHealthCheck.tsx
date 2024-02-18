@@ -1,18 +1,18 @@
 import { Card, CardContent } from "@mui/material";
-import { Diagnosis, Entry } from "../../types";
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import { Diagnosis, OccupationalHealthcareEntry } from "../../../types";
+import WorkIcon from '@mui/icons-material/Work';
 
 interface Props {
-    entry: Entry;
+    entry: OccupationalHealthcareEntry;
     diagnoses: Diagnosis[];
 }
 
-const HospitalEntry = ({ entry, diagnoses }: Props) => {
+const OccupationalHealthCheck = ({ entry, diagnoses }: Props) => {
   return (
     <div>
-      <Card sx={{ bgcolor: '#ffe4e1' }}>
+      <Card sx={{ bgcolor: '#dddddd' }}>
         <CardContent>
-          {entry.date} <LocalHospitalIcon /><br/>
+          {entry.date} <WorkIcon /><i>{entry.employerName}</i><br/>
           <i>{entry.description}</i>
           {entry.diagnosisCodes && <div><br/></div>}
           {entry.diagnosisCodes?.map(d => <li key={d}>{d} {diagnoses.find(diag => diag.code === d)?.name}</li>)}<br/>
@@ -23,4 +23,4 @@ const HospitalEntry = ({ entry, diagnoses }: Props) => {
   );
 };
 
-export default HospitalEntry;
+export default OccupationalHealthCheck;

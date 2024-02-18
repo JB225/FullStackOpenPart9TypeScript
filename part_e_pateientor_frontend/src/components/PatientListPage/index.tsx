@@ -29,7 +29,7 @@ const PatientListPage = ({ patients, setPatients } : Props ) => {
 
   const submitNewPatient = async (values: PatientFormValues) => {
     try {
-      const patient = await patientService.create(values);
+      const patient = await patientService.createNewPatient(values);
       setPatients(patients.concat(patient));
       setModalOpen(false);
     } catch (e: unknown) {
@@ -47,6 +47,31 @@ const PatientListPage = ({ patients, setPatients } : Props ) => {
       }
     }
   };
+
+  //TODO: Pass this method as props through to the EntryForm Component
+  // Look at below link to update state - must be immutable
+  //https://stackoverflow.com/questions/29537299/how-can-i-update-state-item1-in-state-using-setstate
+  
+  // const submitNewEntry = async (patientID: string, values: EntryWithoutId) => {
+  //   try {
+  //     const entry: Entry = await patientService.createNewEntry(patientID, values);
+  //     patients.find(patient => patient.id === patientID)?.entries.push(entry);
+      
+  //   } catch (e: unknown) {
+  //     if (axios.isAxiosError(e)) {
+  //       if (e?.response?.data && typeof e?.response?.data === "string") {
+  //         const message = e.response.data.replace('Something went wrong. Error: ', '');
+  //         console.error(message);
+  //         setError(message);
+  //       } else {
+  //         setError("Unrecognized axios error");
+  //       }
+  //     } else {
+  //       console.error("Unknown error", e);
+  //       setError("Unknown error");
+  //     }
+  //   }
+  // };
 
   return (
     <div className="App">
