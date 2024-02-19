@@ -1,18 +1,30 @@
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, MenuItem, TextField, Typography } from "@mui/material";
 import { Box } from '@mui/system';
 import { SyntheticEvent, useState } from "react";
+import { EntryWithoutId, HealthCheckRating } from "../../types";
+import Select from '@mui/material/Select';
 
-const EntryForm = () => {
+interface Props {
+  submitNewEntry: (values: EntryWithoutId) => void;
+}
+
+const EntryForm = ({ submitNewEntry } : Props) => {
   const [description, setDescription] = useState<string>('');
   const [date, setDate] = useState<string>('');
   const [specialist, setSpecialist] = useState<string>('');
-  const [HealthRating, setHealthRating] = useState<string>('');
+  const [healthCheckRating, setHealthRating] = useState<HealthCheckRating>(HealthCheckRating.Healthy);
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     console.log('Add');
-    clearStates();
+    // clearStates();
+
+    const type = 'HealthCheck';
+
+    submitNewEntry({
+      type, description, date, specialist, healthCheckRating, diagnosisCodes
+    });
   };
 
   const handleCancel = (event: SyntheticEvent) => {
@@ -30,7 +42,7 @@ const EntryForm = () => {
     setDescription('');
     setDate('');
     setSpecialist('');
-    setHealthRating('');
+    setHealthRating(HealthCheckRating.Healthy);
     setDiagnosisCodes([]);
   };
 
@@ -40,41 +52,40 @@ const EntryForm = () => {
         <Typography variant={"h6"}>Create New Entry</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
-            key="Description"
             label="Description"
-            fullWidth 
+            fullWidth
             value={description}
             variant="standard"
             onChange={({ target }) => setDescription(target.value)}
           />
           <TextField
-            key="Date"
             label="Date"
-            fullWidth 
+            fullWidth
             value={date}
             variant="standard"
             onChange={({ target }) => setDate(target.value)}
           />
           <TextField
-            key="specialist"
             label="Specialist"
-            fullWidth 
+            fullWidth
             value={specialist}
             variant="standard"
             onChange={({ target }) => setSpecialist(target.value)}
           />
-          <TextField
-            key="HealthRating"
+          {/* TODO: Fix Health Rating Selection */}
+          <Select 
             label="Health Rating"
-            fullWidth 
-            value={HealthRating}
+            fullWidth
+            value={healthCheckRating}
             variant="standard"
-            onChange={({ target }) => setHealthRating(target.value)}
-          />
+            onChange={({ target }) => setHealthRating(target.value as HealthCheckRating)}>
+            {Object.values(HealthCheckRating).map(key => (
+              <MenuItem key={key} value={key}>{key}</MenuItem>
+            ))}
+          </Select>
           <TextField
-            key="diagnosisCodes"
             label="Diagnosis Codes"
-            fullWidth 
+            fullWidth
             value={diagnosisCodes}
             variant="standard"
             onChange={({ target }) => parseDiagnosisCodes(target.value)}

@@ -133,7 +133,7 @@ const parseString = (stringValue: unknown, variableName: string): string => {
 
 const parseGender = (gender: unknown): Gender => {
     if (!gender || !isString(gender) || !isGender(gender)) {
-        throw new Error('Inccorect or missing gender');
+        throw new Error('Incorect or missing gender');
     }
     return gender;
 };
@@ -162,15 +162,16 @@ const parseSickLeave = (object: unknown): SickLeave => {
 };
 
 const parseHealthCheckEntry = (healthRating: unknown): HealthCheckRating => {
+    console.log(healthRating);
     if (!healthRating || !isNumber(healthRating) || !isHealthCheckRating(healthRating)) {
-        throw new Error('Inccorect or missing gender');
+        throw new Error('Incorrect or missing health check rating');
     }
     return healthRating;
 };
 
 const parseDischarge = (discharge: unknown): Discharge => {
     if (!discharge || !isDischarge(discharge)) {
-        throw new Error('Inccorect or missing discharge');
+        throw new Error('Incorrect or missing discharge');
     }
 
     return discharge;

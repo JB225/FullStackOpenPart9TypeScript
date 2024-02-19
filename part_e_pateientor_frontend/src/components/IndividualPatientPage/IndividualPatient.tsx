@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Patient, Gender, Diagnosis, Entry } from "../../types";
+import { Patient, Gender, Diagnosis, Entry, EntryWithoutId } from "../../types";
 import patientService from "../../services/patients";
 import { useEffect, useState } from "react";
 import { Male, Female, Transgender } from "@mui/icons-material";
@@ -10,6 +10,7 @@ import OccupationalHealthCheck from "./Entry/OccupationalHealthCheck";
 import HealthCheck from "./Entry/HealthCheck";
 import { assertNever } from "../../utils";
 import EntryForm from "./EntryForm";
+import axios from "axios";
 
 const IndividualPatient = () => {
   const [patient, setPatient] = useState<Patient>({id: '', name: '', dateOfBirth: '', ssn: '',
@@ -45,6 +46,31 @@ const IndividualPatient = () => {
     }
   };
 
+  const submitNewEntry = async (values: EntryWithoutId) => {
+    try {
+      const entry: Entry = await patientService.createNewEntry(patient.id, values);
+
+      const patientCopy = {...patient};
+      patientCopy.entries.push(entry);
+      setPatient(patientCopy);
+
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace('Something went wrong. Error: ', '');
+          console.error(message);
+          // Add Error Notification Handling here
+          // setError(message);
+        } else {
+          // setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        // setError("Unknown error");
+      }
+    }
+  };
+
   return (
     <div>
       <br/>
@@ -57,9 +83,9 @@ const IndividualPatient = () => {
         } [patient.gender]}
       </Typography><br/>
       <div>ssn: {patient.ssn}</div>
-      <div>occupation: {patient.occupation}</div><br/>
+      <div>occupation: {patient.occupation}</div>
 
-      <EntryForm />
+      <EntryForm submitNewEntry={submitNewEntry} />
 
       <Typography variant="h5">entries</Typography><br/>
       {patient.entries.map(e => entryComponent(e))}
