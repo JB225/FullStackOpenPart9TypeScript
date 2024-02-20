@@ -58,14 +58,15 @@ export type SickLeave = {
 };
 
 export interface HealthCheckEntry extends BaseEntry {
-type: 'HealthCheck';
-healthCheckRating: HealthCheckRating;
+  type: 'HealthCheck';
+  healthCheckRating: HealthCheckRating;
 }
+
 export enum HealthCheckRating {
-"Healthy" = 0,
-"LowRisk" = 1,
-"HighRisk" = 2,
-"CriticalRisk" = 3
+  "Healthy" = 0,
+  "LowRisk" = 1,
+  "HighRisk" = 2,
+  "CriticalRisk" = 3
 }
 
 export type Entry =

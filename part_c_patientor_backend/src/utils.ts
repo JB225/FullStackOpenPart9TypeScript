@@ -163,7 +163,7 @@ const parseSickLeave = (object: unknown): SickLeave => {
 
 const parseHealthCheckEntry = (healthRating: unknown): HealthCheckRating => {
     console.log(healthRating);
-    if (!healthRating || !isNumber(healthRating) || !isHealthCheckRating(healthRating)) {
+    if (!healthRating || !isHealthCheckRating(healthRating)) {
         throw new Error('Incorrect or missing health check rating');
     }
     return healthRating;
@@ -179,10 +179,6 @@ const parseDischarge = (discharge: unknown): Discharge => {
 
 const isString = (text: unknown): text is string => {
     return typeof text === 'string' || text instanceof String;
-};
-
-const isNumber = (number: unknown): number is number => {
-    return typeof number === 'number' || number instanceof Number;
 };
 
 const isGender = (gender: string): gender is Gender => {
@@ -207,8 +203,8 @@ const isSickLeave = (leave: unknown): leave is SickLeave => {
         && 'endDate' in leave && isString(leave.endDate);
 };
 
-const isHealthCheckRating = (healthRating: number): healthRating is HealthCheckRating => {
-    return Object.values(HealthCheckRating).map(v => v).includes(healthRating);
+const isHealthCheckRating = (healthRating: unknown): healthRating is HealthCheckRating => {
+    return isString(healthRating) && Object.values(HealthCheckRating).map(v => v).includes(healthRating);
 };
 
 const isDischarge = (discharge: unknown): discharge is Discharge => {

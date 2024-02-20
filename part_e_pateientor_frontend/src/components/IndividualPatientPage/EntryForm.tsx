@@ -22,6 +22,9 @@ const EntryForm = ({ submitNewEntry } : Props) => {
 
     const type = 'HealthCheck';
 
+    Object.keys(HealthCheckRating).map(key => console.log(key));
+    console.log(HealthCheckRating);
+
     submitNewEntry({
       type, description, date, specialist, healthCheckRating, diagnosisCodes
     });
@@ -34,7 +37,6 @@ const EntryForm = ({ submitNewEntry } : Props) => {
   };
 
   const parseDiagnosisCodes = (diagnosisCodes: string) => {
-    diagnosisCodes.split(',');
     setDiagnosisCodes(diagnosisCodes.split(','));
   };
 
@@ -72,16 +74,17 @@ const EntryForm = ({ submitNewEntry } : Props) => {
             variant="standard"
             onChange={({ target }) => setSpecialist(target.value)}
           />
-          {/* TODO: Fix Health Rating Selection */}
           <Select 
             label="Health Rating"
             fullWidth
             value={healthCheckRating}
             variant="standard"
             onChange={({ target }) => setHealthRating(target.value as HealthCheckRating)}>
-            {Object.values(HealthCheckRating).map(key => (
-              <MenuItem key={key} value={key}>{key}</MenuItem>
-            ))}
+            {(Object.keys(HealthCheckRating) as Array<keyof typeof HealthCheckRating>)
+              .filter(key => isNaN(Number(key)))            
+              .map(key => (
+                <MenuItem key={key} value={key}>{key}</MenuItem>
+              ))}
           </Select>
           <TextField
             label="Diagnosis Codes"
