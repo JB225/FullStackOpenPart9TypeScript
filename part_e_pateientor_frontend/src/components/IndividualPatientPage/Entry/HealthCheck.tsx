@@ -22,7 +22,7 @@ const HealthCheck = ({ entry, diagnoses }: Props) => {
             [HealthCheckRating.CriticalRisk]: <FavoriteIcon style={{ color: "red" }} />
           } [entry.healthCheckRating]}
           {entry.diagnosisCodes && <div><br/></div>}
-          {entry.diagnosisCodes?.map(d => <li key={d}>{d} {diagnoses.find(diag => diag.code === d)?.name}</li>)}<br/><br/>
+          {entry.diagnosisCodes?.map(d => <li key={d}>{d} {diagnoses.find(diag => diag.code === d)?.name}</li>)}<br/>
           Diagnosis by {entry.specialist}
         </CardContent>
       </Card><br/>

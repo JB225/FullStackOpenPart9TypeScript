@@ -2,7 +2,6 @@ import { Button, MenuItem, TextField, Typography } from "@mui/material";
 import { Box } from '@mui/system';
 import { SyntheticEvent, useState } from "react";
 import { EntryWithoutId, HealthCheckRating } from "../../types";
-import Select from '@mui/material/Select';
 
 interface Props {
   submitNewEntry: (values: EntryWithoutId) => void;
@@ -12,19 +11,14 @@ const EntryForm = ({ submitNewEntry } : Props) => {
   const [description, setDescription] = useState<string>('');
   const [date, setDate] = useState<string>('');
   const [specialist, setSpecialist] = useState<string>('');
-  const [healthCheckRating, setHealthRating] = useState<HealthCheckRating>(HealthCheckRating.Healthy);
+  const [healthCheckRating, setHealthRating] = useState<HealthCheckRating>('Healthy' as unknown as HealthCheckRating);
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    console.log('Add');
     // clearStates();
 
     const type = 'HealthCheck';
-
-    Object.keys(HealthCheckRating).map(key => console.log(key));
-    console.log(HealthCheckRating);
-
     submitNewEntry({
       type, description, date, specialist, healthCheckRating, diagnosisCodes
     });
@@ -44,7 +38,7 @@ const EntryForm = ({ submitNewEntry } : Props) => {
     setDescription('');
     setDate('');
     setSpecialist('');
-    setHealthRating(HealthCheckRating.Healthy);
+    setHealthRating('Healthy' as unknown as HealthCheckRating);
     setDiagnosisCodes([]);
   };
 
@@ -74,18 +68,19 @@ const EntryForm = ({ submitNewEntry } : Props) => {
             variant="standard"
             onChange={({ target }) => setSpecialist(target.value)}
           />
-          <Select 
+          <TextField 
             label="Health Rating"
             fullWidth
             value={healthCheckRating}
             variant="standard"
-            onChange={({ target }) => setHealthRating(target.value as HealthCheckRating)}>
+            select
+            onChange={({ target }) => setHealthRating(target.value as unknown as HealthCheckRating)}>
             {(Object.keys(HealthCheckRating) as Array<keyof typeof HealthCheckRating>)
               .filter(key => isNaN(Number(key)))            
               .map(key => (
                 <MenuItem key={key} value={key}>{key}</MenuItem>
               ))}
-          </Select>
+          </TextField>
           <TextField
             label="Diagnosis Codes"
             fullWidth

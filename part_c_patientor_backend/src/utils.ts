@@ -61,7 +61,7 @@ const toNewBaseEntry = (entry: unknown): NewBaseEntry => {
        };
 
        if ('diagnosisCodes' in entry) {
-           newBaseEntry.diagnosisCodes = parseDiagnosisCodes(entry.diagnosisCodes);
+           newBaseEntry.diagnosisCodes = parseDiagnosisCodes(entry);
        }
 
        return newBaseEntry;
