@@ -16,7 +16,7 @@ const IndividualPatient = () => {
   const [patient, setPatient] = useState<Patient>({id: '', name: '', dateOfBirth: '', ssn: '',
     gender: Gender.Other, occupation: '', entries: []});
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
-  const [alertVisible, setAlertVisible] = useState<boolean>(true);
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const id: string = useParams().id as string;
@@ -58,24 +58,16 @@ const IndividualPatient = () => {
       setPatient(patientCopy);
 
     } catch (e: unknown) {
-      // TODO: Return JSON object from error?
       if (axios.isAxiosError(e)) {
-        if (e?.response?.data && typeof e?.response?.data === "string") {
-          console.log(e);
-          const message = e.response.data.replace('Something went wrong. Error: ', '');
+        if (e?.response?.data?.error && typeof e?.response?.data?.error === "string") {
+          const  message = e.response.data.error.replace('Something went wrong. Error: ', '');
           console.error(message);
           handleError(message);
-          // Add Error Notification Handling here
-          // setError(message);
         } else {
           handleError("Unrecognized axios error");
-          // setError("Unrecognized axios error");
         }
       } else {
-        // console.error("Unknown error", e);
         handleError("Unkown Error");
-
-        // setError("Unknown error");
       }
     }
   };
@@ -100,7 +92,7 @@ const IndividualPatient = () => {
       <div>occupation: {patient.occupation}</div>
 
       { alertVisible &&
-      (<Fade in={alertVisible} addEndListener={() => setTimeout(() => {setAlertVisible(true);}, 5000)}>
+      (<Fade in={alertVisible} addEndListener={() => setTimeout(() => {setAlertVisible(false);}, 5000)}>
         <Alert severity="error">{errorMessage}</Alert>
       </Fade>)}
 

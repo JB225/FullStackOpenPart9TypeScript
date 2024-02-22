@@ -126,14 +126,14 @@ const toHospital = (baseEntry : NewBaseEntry, entry: unknown): NewEntry => {
 
 const parseString = (stringValue: unknown, variableName: string): string => {
     if (!stringValue || !isString(stringValue)) {
-        throw new Error(`Inccorect or missing ${variableName}`);
+        throw new Error(`Incorrect or missing ${variableName}`);
     }
     return stringValue;
 };
 
 const parseGender = (gender: unknown): Gender => {
     if (!gender || !isString(gender) || !isGender(gender)) {
-        throw new Error('Incorect or missing gender');
+        throw new Error('Incorrect or missing gender');
     }
     return gender;
 };

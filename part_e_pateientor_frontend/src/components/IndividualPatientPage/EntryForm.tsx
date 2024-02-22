@@ -16,7 +16,7 @@ const EntryForm = ({ submitNewEntry } : Props) => {
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    // clearStates();
+    clearStates();
 
     const type = 'HealthCheck';
     submitNewEntry({
