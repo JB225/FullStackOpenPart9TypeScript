@@ -3,21 +3,27 @@ import { Patient, Gender, Diagnosis, Entry, EntryWithoutId } from "../../types";
 import patientService from "../../services/patients";
 import { useEffect, useState } from "react";
 import { Male, Female, Transgender } from "@mui/icons-material";
-import { Alert, Fade, Typography } from "@mui/material";
+import { Alert, Button, Fade, MenuItem, Select, Typography } from "@mui/material";
 import diagnosisService from "../../services/diagnoses";
 import HospitalEntry from "./Entry/HospitalEntry";
 import OccupationalHealthCheck from "./Entry/OccupationalHealthCheck";
 import HealthCheck from "./Entry/HealthCheck";
 import { assertNever } from "../../utils";
-import EntryForm from "./EntryForm";
 import axios from "axios";
+import HealthCheckEntryForm from "./EntryForms/HealthCheckEntryForm";
+import HosptialEntryForm from "./EntryForms/HospitalEntryForm";
+import OccupationalHealthCheckEntryForm from "./EntryForms/OccupationalHealthCheckEntryForm";
 
 const IndividualPatient = () => {
-  const [patient, setPatient] = useState<Patient>({id: '', name: '', dateOfBirth: '', ssn: '',
-    gender: Gender.Other, occupation: '', entries: []});
+  const [patient, setPatient] = useState<Patient>({id: "", name: "", dateOfBirth: "", ssn: "",
+    gender: Gender.Other, occupation: "", entries: []});
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const [entryFormVisible, setEntryFormVisible] = useState<boolean>(false);
+  const [entryFormType, setEntryFormType] = useState<string>("HealthCheck");
 
   const id: string = useParams().id as string;
 
@@ -49,6 +55,19 @@ const IndividualPatient = () => {
     }
   };
 
+  const entryFormComponent = () => {
+    switch(entryFormType) {
+    case "Hospital":
+      return <HosptialEntryForm submitNewEntry={submitNewEntry} setEntryFormVisible={setEntryFormVisible} />;
+    case "OccupationalHealthcare":
+      return <OccupationalHealthCheckEntryForm submitNewEntry={submitNewEntry} setEntryFormVisible={setEntryFormVisible} />;
+    case "HealthCheck":
+      return <HealthCheckEntryForm submitNewEntry={submitNewEntry} setEntryFormVisible={setEntryFormVisible} />;
+    default:
+      return assertNever(entryFormType as never);
+    }
+  };
+
   const submitNewEntry = async (values: EntryWithoutId) => {
     try {
       const entry: Entry = await patientService.createNewEntry(patient.id, values);
@@ -60,7 +79,7 @@ const IndividualPatient = () => {
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         if (e?.response?.data?.error && typeof e?.response?.data?.error === "string") {
-          const  message = e.response.data.error.replace('Something went wrong. Error: ', '');
+          const  message = e.response.data.error.replace("Something went wrong. Error: ", "");
           console.error(message);
           handleError(message);
         } else {
@@ -96,7 +115,19 @@ const IndividualPatient = () => {
         <Alert severity="error">{errorMessage}</Alert>
       </Fade>)}
 
-      <EntryForm submitNewEntry={submitNewEntry} />
+      {entryFormVisible ? 
+        entryFormComponent() : 
+        <div>
+          <Select label="Entry Form Type" variant="standard" value={entryFormType} 
+            onChange={event => setEntryFormType(event.target.value as string)}>
+            <MenuItem value={"Hospital"}>Hospital</MenuItem>
+            <MenuItem value={"HealthCheck"}>Health Check</MenuItem>
+            <MenuItem value={"OccupationalHealthcare"}>Occupational Health Check</MenuItem>            
+          </Select><br/>
+          <Button sx={{mt: 2, mb:2}} variant="contained" onClick={() => setEntryFormVisible(!entryFormVisible)}>
+          Create New Entry</Button>
+        </div>}
+
 
       <Typography variant="h5">entries</Typography><br/>
       {patient.entries.map(e => entryComponent(e))}

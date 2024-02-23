@@ -1,24 +1,26 @@
 import { Button, MenuItem, TextField, Typography } from "@mui/material";
-import { Box } from '@mui/system';
-import { SyntheticEvent, useState } from "react";
-import { EntryWithoutId, HealthCheckRating } from "../../types";
+import { Box } from "@mui/system";
+import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
+import { EntryWithoutId, HealthCheckRating } from "../../../types";
 
 interface Props {
   submitNewEntry: (values: EntryWithoutId) => void;
+  setEntryFormVisible: Dispatch<SetStateAction<boolean>>;
 }
 
-const EntryForm = ({ submitNewEntry } : Props) => {
-  const [description, setDescription] = useState<string>('');
-  const [date, setDate] = useState<string>('');
-  const [specialist, setSpecialist] = useState<string>('');
-  const [healthCheckRating, setHealthRating] = useState<HealthCheckRating>('Healthy' as unknown as HealthCheckRating);
+const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) => {
+  const [description, setDescription] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [specialist, setSpecialist] = useState<string>("");
+  const [healthCheckRating, setHealthRating] = useState<HealthCheckRating>("Healthy" as unknown as HealthCheckRating);
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     clearStates();
+    setEntryFormVisible(false);
 
-    const type = 'HealthCheck';
+    const type = "HealthCheck";
     submitNewEntry({
       type, description, date, specialist, healthCheckRating, diagnosisCodes
     });
@@ -26,26 +28,26 @@ const EntryForm = ({ submitNewEntry } : Props) => {
 
   const handleCancel = (event: SyntheticEvent) => {
     event.preventDefault();
-    console.log('Cancel');
     clearStates();
+    setEntryFormVisible(false);
   };
 
   const parseDiagnosisCodes = (diagnosisCodes: string) => {
-    setDiagnosisCodes(diagnosisCodes.split(','));
+    setDiagnosisCodes(diagnosisCodes.split(","));
   };
 
   const clearStates = () => {
-    setDescription('');
-    setDate('');
-    setSpecialist('');
-    setHealthRating('Healthy' as unknown as HealthCheckRating);
+    setDescription("");
+    setDate("");
+    setSpecialist("");
+    setHealthRating("Healthy" as unknown as HealthCheckRating);
     setDiagnosisCodes([]);
   };
 
   return (
     <div>
-      <Box m={1} p={2} sx={{ border: 2, borderStyle: 'dotted' }}>
-        <Typography variant={"h6"}>Create New Entry</Typography>
+      <Box m={1} p={2} sx={{ border: 2, borderStyle: "dotted" }}>
+        <Typography variant={"h6"}>Create New Health Check Entry</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
             label="Description"
@@ -112,4 +114,4 @@ const EntryForm = ({ submitNewEntry } : Props) => {
      
 };
 
-export default EntryForm;
+export default HealthCheckEntryForm;
