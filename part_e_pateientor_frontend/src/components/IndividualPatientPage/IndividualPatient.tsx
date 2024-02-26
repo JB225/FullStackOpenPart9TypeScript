@@ -3,21 +3,22 @@ import { Patient, Gender, Diagnosis, Entry, EntryWithoutId } from "../../types";
 import patientService from "../../services/patients";
 import { useEffect, useState } from "react";
 import { Male, Female, Transgender } from "@mui/icons-material";
-import { Alert, Button, Fade, MenuItem, Select, Typography } from "@mui/material";
+import { Alert, Button, Fade, FormControl, MenuItem, Select, Typography } from "@mui/material";
 import diagnosisService from "../../services/diagnoses";
-import HospitalEntry from "./Entry/HospitalEntry";
-import OccupationalHealthCheck from "./Entry/OccupationalHealthCheck";
-import HealthCheck from "./Entry/HealthCheck";
 import { assertNever } from "../../utils";
 import axios from "axios";
 import HealthCheckEntryForm from "./EntryForms/HealthCheckEntryForm";
 import HosptialEntryForm from "./EntryForms/HospitalEntryForm";
 import OccupationalHealthCheckEntryForm from "./EntryForms/OccupationalHealthCheckEntryForm";
+import HospitalEntryUI from "./Entry/HospitalEntryUI";
+import OccupationalHealthCheckUI from "./Entry/OccupationalHealthCheckUI";
+import HealthCheckUI from "./Entry/HealthCheckUI";
 
 const IndividualPatient = () => {
   const [patient, setPatient] = useState<Patient>({id: "", name: "", dateOfBirth: "", ssn: "",
     gender: Gender.Other, occupation: "", entries: []});
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
 
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -37,6 +38,9 @@ const IndividualPatient = () => {
     const fetchDiagnoses = async () => {
       const diagnosesData: Diagnosis[] = await diagnosisService.getAll();
       setDiagnoses(diagnosesData);
+
+      const codes: string[] = diagnosesData.map(diagnosis => diagnosis.code);
+      setDiagnosisCodes(codes);
     };
     void fetchDiagnoses();
 
@@ -45,11 +49,11 @@ const IndividualPatient = () => {
   const entryComponent = (entry: Entry) => {
     switch(entry.type) {
     case "Hospital":
-      return <HospitalEntry entry={entry} diagnoses={diagnoses} key={entry.id}/>;
+      return <HospitalEntryUI entry={entry} diagnoses={diagnoses} key={entry.id}/>;
     case "OccupationalHealthcare":
-      return <OccupationalHealthCheck entry={entry} diagnoses={diagnoses} key={entry.id}/>;
+      return <OccupationalHealthCheckUI entry={entry} diagnoses={diagnoses} key={entry.id}/>;
     case "HealthCheck":
-      return <HealthCheck entry={entry} diagnoses={diagnoses} key={entry.id}/>;
+      return <HealthCheckUI entry={entry} diagnoses={diagnoses} key={entry.id}/>;
     default:
       return assertNever(entry);
     }
@@ -58,11 +62,11 @@ const IndividualPatient = () => {
   const entryFormComponent = () => {
     switch(entryFormType) {
     case "Hospital":
-      return <HosptialEntryForm submitNewEntry={submitNewEntry} setEntryFormVisible={setEntryFormVisible} />;
+      return <HosptialEntryForm submitNewEntry={submitNewEntry} setEntryFormVisible={setEntryFormVisible} diagnoses={diagnosisCodes}  />;
     case "OccupationalHealthcare":
-      return <OccupationalHealthCheckEntryForm submitNewEntry={submitNewEntry} setEntryFormVisible={setEntryFormVisible} />;
+      return <OccupationalHealthCheckEntryForm submitNewEntry={submitNewEntry} setEntryFormVisible={setEntryFormVisible} diagnoses={diagnosisCodes}  />;
     case "HealthCheck":
-      return <HealthCheckEntryForm submitNewEntry={submitNewEntry} setEntryFormVisible={setEntryFormVisible} />;
+      return <HealthCheckEntryForm submitNewEntry={submitNewEntry} setEntryFormVisible={setEntryFormVisible} diagnoses={diagnosisCodes}  />;
     default:
       return assertNever(entryFormType as never);
     }
@@ -118,14 +122,16 @@ const IndividualPatient = () => {
       {entryFormVisible ? 
         entryFormComponent() : 
         <div>
-          <Select label="Entry Form Type" variant="standard" value={entryFormType} 
-            onChange={event => setEntryFormType(event.target.value as string)}>
-            <MenuItem value={"Hospital"}>Hospital</MenuItem>
-            <MenuItem value={"HealthCheck"}>Health Check</MenuItem>
-            <MenuItem value={"OccupationalHealthcare"}>Occupational Health Check</MenuItem>            
-          </Select><br/>
-          <Button sx={{mt: 2, mb:2}} variant="contained" onClick={() => setEntryFormVisible(!entryFormVisible)}>
+          <FormControl margin="normal" style={{minWidth:200}}>
+            <Select label="Entry Form Type" variant="standard" value={entryFormType}
+              onChange={event => setEntryFormType(event.target.value as string)}>
+              <MenuItem value={"Hospital"}>Hospital</MenuItem>
+              <MenuItem value={"HealthCheck"}>Health Check</MenuItem>
+              <MenuItem value={"OccupationalHealthcare"}>Occupational Health Check</MenuItem>            
+            </Select>
+            <Button sx={{mt: 2, mb:2}} variant="contained" onClick={() => setEntryFormVisible(!entryFormVisible)}>
           Create New Entry</Button>
+          </FormControl>
         </div>}
 
 

@@ -1,18 +1,20 @@
-import { Button, MenuItem, TextField, Typography } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
-import { EntryWithoutId, HealthCheckRating } from "../../../types";
+import { Diagnosis, EntryWithoutId } from "../../../types";
 
 interface Props {
   submitNewEntry: (values: EntryWithoutId) => void;
   setEntryFormVisible: Dispatch<SetStateAction<boolean>>;
+  diagnoses: Diagnosis[];
 }
 
-const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) => {
+const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses } : Props) => {
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [specialist, setSpecialist] = useState<string>(""); 
-  const [healthCheckRating, setHealthRating] = useState<HealthCheckRating>("Healthy" as unknown as HealthCheckRating);
+  const [dischargeCriteria, setDischargeCriteria] = useState<string>("");
+  const [dischargeDate, setDischargeDate] = useState<string>("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
 
   const handleSubmit = (event: SyntheticEvent) => {
@@ -20,9 +22,13 @@ const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) => {
     clearStates();
     setEntryFormVisible(false);
 
-    const type = "HealthCheck";
+    const type = "Hospital";
+    const discharge = {
+      date: dischargeDate,
+      criteria: dischargeCriteria
+    };
     submitNewEntry({
-      type, description, date, specialist, healthCheckRating, diagnosisCodes
+      type, description, date, specialist, discharge, diagnosisCodes
     });
   };
 
@@ -40,13 +46,14 @@ const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) => {
     setDescription("");
     setDate("");
     setSpecialist("");
-    setHealthRating("Healthy" as unknown as HealthCheckRating);
+    setDischargeDate("");
+    setDischargeCriteria("");
     setDiagnosisCodes([]);
   };
 
   return (
     <div>
-      <Box m={1} p={2} sx={{ border: 2, borderStyle: "dotted" }}>
+      <Box m={1} p={2} sx={{ border: 2, borderStyle: "solid" }}>
         <Typography variant={"h6"}>Create New Hospital Entry</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
@@ -70,19 +77,20 @@ const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) => {
             variant="standard"
             onChange={({ target }) => setSpecialist(target.value)}
           />
-          <TextField 
-            label="Health Rating"
+          <TextField
+            label="Discharge Date"
             fullWidth
-            value={healthCheckRating}
+            value={dischargeDate}
             variant="standard"
-            select
-            onChange={({ target }) => setHealthRating(target.value as unknown as HealthCheckRating)}>
-            {(Object.keys(HealthCheckRating) as Array<keyof typeof HealthCheckRating>)
-              .filter(key => isNaN(Number(key)))            
-              .map(key => (
-                <MenuItem key={key} value={key}>{key}</MenuItem>
-              ))}
-          </TextField>
+            onChange={({ target }) => setDischargeDate(target.value)}
+          />
+          <TextField
+            label="Discharge Criteria"
+            fullWidth
+            value={dischargeCriteria}
+            variant="standard"
+            onChange={({ target }) => setDischargeCriteria(target.value)}
+          />
           <TextField
             label="Diagnosis Codes"
             fullWidth

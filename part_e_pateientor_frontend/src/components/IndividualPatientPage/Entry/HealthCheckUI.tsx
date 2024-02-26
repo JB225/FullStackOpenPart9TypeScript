@@ -1,17 +1,17 @@
 import { Card, CardContent } from "@mui/material";
 import { Diagnosis, HealthCheckEntry, HealthCheckRating } from "../../../types";
-import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 interface Props {
     entry: HealthCheckEntry;
     diagnoses: Diagnosis[];
 }
 
-const HealthCheck = ({ entry, diagnoses }: Props) => {
+const HealthCheckUI = ({ entry, diagnoses }: Props) => {
   return (
     <div>
-      <Card sx={{ bgcolor: '#e6e6fa' }}>
+      <Card sx={{ bgcolor: "#e6e6fa" }}>
         <CardContent>
           {entry.date} <MedicalServicesIcon /><br/>
           <i>{entry.description}</i><br/>
@@ -30,4 +30,4 @@ const HealthCheck = ({ entry, diagnoses }: Props) => {
   );
 };
 
-export default HealthCheck;
+export default HealthCheckUI;

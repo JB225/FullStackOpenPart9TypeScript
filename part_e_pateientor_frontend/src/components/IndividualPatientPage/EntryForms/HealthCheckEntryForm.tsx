@@ -1,19 +1,20 @@
-import { Button, MenuItem, TextField, Typography } from "@mui/material";
+import { Button, Checkbox, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
-import { EntryWithoutId, HealthCheckRating } from "../../../types";
+import { Diagnosis, EntryWithoutId, HealthCheckRating } from "../../../types";
 
 interface Props {
   submitNewEntry: (values: EntryWithoutId) => void;
   setEntryFormVisible: Dispatch<SetStateAction<boolean>>;
+  diagnoses: string[];
 }
 
-const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) => {
+const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses} : Props) => {
   const [description, setDescription] = useState<string>("");
-  const [date, setDate] = useState<string>("");
+  const [date, setDate] = useState<string>("2024-01-01");
   const [specialist, setSpecialist] = useState<string>("");
   const [healthCheckRating, setHealthRating] = useState<HealthCheckRating>("Healthy" as unknown as HealthCheckRating);
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+  const [selectedDiagCodes, setSelectedDiagCodes] = useState<string[]>([]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -22,7 +23,7 @@ const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) =
 
     const type = "HealthCheck";
     submitNewEntry({
-      type, description, date, specialist, healthCheckRating, diagnosisCodes
+      type, description, date, specialist, healthCheckRating, diagnosisCodes: selectedDiagCodes
     });
   };
 
@@ -32,21 +33,26 @@ const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) =
     setEntryFormVisible(false);
   };
 
-  const parseDiagnosisCodes = (diagnosisCodes: string) => {
-    setDiagnosisCodes(diagnosisCodes.split(","));
-  };
-
   const clearStates = () => {
     setDescription("");
     setDate("");
     setSpecialist("");
     setHealthRating("Healthy" as unknown as HealthCheckRating);
-    setDiagnosisCodes([]);
+    setSelectedDiagCodes([]);
+  };
+
+  const handleChange = (event: SelectChangeEvent<typeof selectedDiagCodes>) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedDiagCodes(
+      typeof value === "string" ? value.split(",") : value,
+    );
   };
 
   return (
     <div>
-      <Box m={1} p={2} sx={{ border: 2, borderStyle: "dotted" }}>
+      <Box m={1} p={2} sx={{ border: 2, borderStyle: "solid" }}>
         <Typography variant={"h6"}>Create New Health Check Entry</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
@@ -58,6 +64,7 @@ const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) =
           />
           <TextField
             label="Date"
+            type="date"
             fullWidth
             value={date}
             variant="standard"
@@ -83,13 +90,24 @@ const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) =
                 <MenuItem key={key} value={key}>{key}</MenuItem>
               ))}
           </TextField>
-          <TextField
-            label="Diagnosis Codes"
+
+          <Select
+            label="diagnoses"
+            multiple
             fullWidth
-            value={diagnosisCodes}
             variant="standard"
-            onChange={({ target }) => parseDiagnosisCodes(target.value)}
-          />
+            value={selectedDiagCodes}
+            onChange={handleChange}
+            input={<OutlinedInput label="Tag" />}
+            renderValue={(selected) => selected.join(", ")}
+          >
+            {diagnoses.map((diagnosis) => (
+              <MenuItem key={diagnosis} value={diagnosis}>
+                <Checkbox checked={selectedDiagCodes.indexOf(diagnosis) > -1} />
+                <ListItemText primary={diagnosis} />
+              </MenuItem>
+            ))}
+          </Select>
           <Box p={1} display="flex" justifyContent="space-between">
             <Button
               sx={{ backgroundColor: "red" }}

@@ -1,18 +1,21 @@
-import { Button, MenuItem, TextField, Typography } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
-import { EntryWithoutId, HealthCheckRating } from "../../../types";
+import { EntryWithoutId } from "../../../types";
 
 interface Props {
   submitNewEntry: (values: EntryWithoutId) => void;
   setEntryFormVisible: Dispatch<SetStateAction<boolean>>;
+  diagnoses: Diagnosis[];
 }
 
-const OccupationalHealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible } : Props) => {
+const OccupationalHealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses } : Props) => {
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [specialist, setSpecialist] = useState<string>("");
-  const [healthCheckRating, setHealthRating] = useState<HealthCheckRating>("Healthy" as unknown as HealthCheckRating);
+  const [employerName, setEmployerName] = useState<string>("");
+  const [sickLeaveStartDate, setSickLeaveStartDate] = useState<string>("");
+  const [sickLeaveEndDate, setSickLeaveEndDate] = useState<string>("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
 
   const handleSubmit = (event: SyntheticEvent) => {
@@ -20,9 +23,20 @@ const OccupationalHealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible 
     clearStates();
     setEntryFormVisible(false);
 
-    const type = "HealthCheck";
+    const type = "OccupationalHealthcare";
+
+    if (sickLeaveStartDate && sickLeaveEndDate) {
+      const sickLeave = {
+        startDate: sickLeaveStartDate,
+        endDate: sickLeaveEndDate
+      };
+      submitNewEntry({
+        type, description, date, specialist, employerName, sickLeave, diagnosisCodes
+      });
+    }
+    
     submitNewEntry({
-      type, description, date, specialist, healthCheckRating, diagnosisCodes
+      type, description, date, specialist, employerName, diagnosisCodes
     });
   };
 
@@ -40,13 +54,12 @@ const OccupationalHealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible 
     setDescription("");
     setDate("");
     setSpecialist("");
-    setHealthRating("Healthy" as unknown as HealthCheckRating);
     setDiagnosisCodes([]);
   };
 
   return (
     <div>
-      <Box m={1} p={2} sx={{ border: 2, borderStyle: "dotted" }}>
+      <Box m={1} p={2} sx={{ border: 2, borderStyle: "solid" }}>
         <Typography variant={"h6"}>Create New Occupational Health Check Entry</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
@@ -70,19 +83,27 @@ const OccupationalHealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible 
             variant="standard"
             onChange={({ target }) => setSpecialist(target.value)}
           />
-          <TextField 
-            label="Health Rating"
+          <TextField
+            label="Employer Name"
             fullWidth
-            value={healthCheckRating}
+            value={employerName}
             variant="standard"
-            select
-            onChange={({ target }) => setHealthRating(target.value as unknown as HealthCheckRating)}>
-            {(Object.keys(HealthCheckRating) as Array<keyof typeof HealthCheckRating>)
-              .filter(key => isNaN(Number(key)))            
-              .map(key => (
-                <MenuItem key={key} value={key}>{key}</MenuItem>
-              ))}
-          </TextField>
+            onChange={({ target }) => setEmployerName(target.value)}
+          />
+          <TextField
+            label="Sick Leave Start Date"
+            fullWidth
+            value={sickLeaveStartDate}
+            variant="standard"
+            onChange={({ target }) => setSickLeaveStartDate(target.value)}
+          />
+          <TextField
+            label="Sick Leave End Date"
+            fullWidth
+            value={sickLeaveEndDate}
+            variant="standard"
+            onChange={({ target }) => setSickLeaveEndDate(target.value)}
+          />
           <TextField
             label="Diagnosis Codes"
             fullWidth

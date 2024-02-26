@@ -22,20 +22,20 @@ export type Patient = {
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
 
-export type newPatient = Omit<Patient, 'id'>;
+export type newPatient = Omit<Patient, "id">;
 
-export type NonSensitivePatient = Omit<Patient, 'ssn' | 'entries'>;
+export type NonSensitivePatient = Omit<Patient, "ssn" | "entries">;
 
 interface BaseEntry {
   id: string;
   description: string;
   date: string;
   specialist: string;
-  diagnosisCodes?: Array<Diagnosis['code']>;
+  diagnosisCodes?: Array<Diagnosis["code"]>;
 }
 
-interface HospitalEntry extends BaseEntry {
-  type: 'Hospital',
+export interface HospitalEntry extends BaseEntry {
+  type: "Hospital",
   description: string,
   discharge: Discharge
 }
@@ -46,7 +46,7 @@ export type Discharge = {
 };
 
 export interface OccupationalHealthcareEntry extends BaseEntry {
-  type: 'OccupationalHealthcare',
+  type: "OccupationalHealthcare",
   employerName: string,
   description: string,
   sickLeave?: SickLeave
@@ -58,7 +58,7 @@ export type SickLeave = {
 };
 
 export interface HealthCheckEntry extends BaseEntry {
-  type: 'HealthCheck';
+  type: "HealthCheck";
   healthCheckRating: HealthCheckRating;
 }
 
@@ -77,4 +77,4 @@ export type Entry =
 // Define special omit for unions
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
 // Define Entry without the 'id' property
-export type EntryWithoutId = UnionOmit<Entry, 'id'>;
+export type EntryWithoutId = UnionOmit<Entry, "id">;
