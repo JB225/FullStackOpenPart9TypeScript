@@ -1,12 +1,12 @@
 import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
-import { Diagnosis, EntryWithoutId } from "../../../types";
+import { EntryWithoutId } from "../../../types";
 
 interface Props {
   submitNewEntry: (values: EntryWithoutId) => void;
   setEntryFormVisible: Dispatch<SetStateAction<boolean>>;
-  diagnoses: Diagnosis[];
+  diagnoses: string[];
 }
 
 const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses } : Props) => {

@@ -1,7 +1,7 @@
-import { Button, Checkbox, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField, Typography } from "@mui/material";
+import { Button, Checkbox, ListItemText, MenuItem, SelectChangeEvent, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
-import { Diagnosis, EntryWithoutId, HealthCheckRating } from "../../../types";
+import { EntryWithoutId, HealthCheckRating } from "../../../types";
 
 interface Props {
   submitNewEntry: (values: EntryWithoutId) => void;
@@ -41,10 +41,8 @@ const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses} 
     setSelectedDiagCodes([]);
   };
 
-  const handleChange = (event: SelectChangeEvent<typeof selectedDiagCodes>) => {
-    const {
-      target: { value },
-    } = event;
+  const handleCodeChange = (event: SelectChangeEvent<typeof selectedDiagCodes>) => {
+    const { target: { value }, } = event;
     setSelectedDiagCodes(
       typeof value === "string" ? value.split(",") : value,
     );
@@ -91,15 +89,17 @@ const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses} 
               ))}
           </TextField>
 
-          <Select
+          <TextField
             label="diagnoses"
-            multiple
+            select
             fullWidth
             variant="standard"
             value={selectedDiagCodes}
-            onChange={handleChange}
-            input={<OutlinedInput label="Tag" />}
-            renderValue={(selected) => selected.join(", ")}
+            SelectProps={{
+              multiple: true, 
+              renderValue: (selected) => (selected as string[]).join(", "),
+              onChange: (e) => handleCodeChange(e as SelectChangeEvent<string[]>)
+            }}
           >
             {diagnoses.map((diagnosis) => (
               <MenuItem key={diagnosis} value={diagnosis}>
@@ -107,7 +107,7 @@ const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses} 
                 <ListItemText primary={diagnosis} />
               </MenuItem>
             ))}
-          </Select>
+          </TextField>
           <Box p={1} display="flex" justifyContent="space-between">
             <Button
               sx={{ backgroundColor: "red" }}
