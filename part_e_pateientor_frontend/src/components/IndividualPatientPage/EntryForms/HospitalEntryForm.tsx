@@ -1,4 +1,4 @@
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, Checkbox, ListItemText, MenuItem, SelectChangeEvent, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 import { EntryWithoutId } from "../../../types";
@@ -11,11 +11,11 @@ interface Props {
 
 const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses } : Props) => {
   const [description, setDescription] = useState<string>("");
-  const [date, setDate] = useState<string>("");
+  const [date, setDate] = useState<string>("2024-01-01");
   const [specialist, setSpecialist] = useState<string>(""); 
   const [dischargeCriteria, setDischargeCriteria] = useState<string>("");
-  const [dischargeDate, setDischargeDate] = useState<string>("");
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+  const [dischargeDate, setDischargeDate] = useState<string>("2024-01-01");
+  const [selectedDiagCodes, setSelectedDiagCodes] = useState<string[]>([]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -28,7 +28,7 @@ const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses } : 
       criteria: dischargeCriteria
     };
     submitNewEntry({
-      type, description, date, specialist, discharge, diagnosisCodes
+      type, description, date, specialist, discharge, diagnosisCodes: selectedDiagCodes
     });
   };
 
@@ -38,17 +38,20 @@ const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses } : 
     setEntryFormVisible(false);
   };
 
-  const parseDiagnosisCodes = (diagnosisCodes: string) => {
-    setDiagnosisCodes(diagnosisCodes.split(","));
-  };
-
   const clearStates = () => {
     setDescription("");
     setDate("");
     setSpecialist("");
     setDischargeDate("");
     setDischargeCriteria("");
-    setDiagnosisCodes([]);
+    setSelectedDiagCodes([]);
+  };
+
+  const handleCodeChange = (event: SelectChangeEvent<typeof selectedDiagCodes>) => {
+    const { target: { value }, } = event;
+    setSelectedDiagCodes(
+      typeof value === "string" ? value.split(",") : value,
+    );
   };
 
   return (
@@ -66,6 +69,7 @@ const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses } : 
           <TextField
             label="Date"
             fullWidth
+            type="date"
             value={date}
             variant="standard"
             onChange={({ target }) => setDate(target.value)}
@@ -79,6 +83,7 @@ const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses } : 
           />
           <TextField
             label="Discharge Date"
+            type="date"
             fullWidth
             value={dischargeDate}
             variant="standard"
@@ -93,11 +98,23 @@ const HosptialEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses } : 
           />
           <TextField
             label="Diagnosis Codes"
+            select
             fullWidth
-            value={diagnosisCodes}
             variant="standard"
-            onChange={({ target }) => parseDiagnosisCodes(target.value)}
-          />
+            value={selectedDiagCodes}
+            SelectProps={{
+              multiple: true, 
+              renderValue: (selected) => (selected as string[]).join(", "),
+              onChange: (e) => handleCodeChange(e as SelectChangeEvent<string[]>)
+            }}
+          >
+            {diagnoses.map((diagnosis) => (
+              <MenuItem key={diagnosis} value={diagnosis}>
+                <Checkbox checked={selectedDiagCodes.indexOf(diagnosis) > -1} />
+                <ListItemText primary={diagnosis} />
+              </MenuItem>
+            ))}
+          </TextField>
           <Box p={1} display="flex" justifyContent="space-between">
             <Button
               sx={{ backgroundColor: "red" }}

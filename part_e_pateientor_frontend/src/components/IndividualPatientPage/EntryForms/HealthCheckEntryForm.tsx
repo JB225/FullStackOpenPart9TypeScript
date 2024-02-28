@@ -88,9 +88,8 @@ const HealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses} 
                 <MenuItem key={key} value={key}>{key}</MenuItem>
               ))}
           </TextField>
-
           <TextField
-            label="diagnoses"
+            label="Diagnosis Codes"
             select
             fullWidth
             variant="standard"

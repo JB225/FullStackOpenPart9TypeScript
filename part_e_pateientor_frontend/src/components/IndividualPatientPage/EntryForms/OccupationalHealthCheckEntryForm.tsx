@@ -1,4 +1,4 @@
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, Checkbox, ListItemText, MenuItem, SelectChangeEvent, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 import { EntryWithoutId } from "../../../types";
@@ -6,17 +6,17 @@ import { EntryWithoutId } from "../../../types";
 interface Props {
   submitNewEntry: (values: EntryWithoutId) => void;
   setEntryFormVisible: Dispatch<SetStateAction<boolean>>;
-  diagnoses: Diagnosis[];
+  diagnoses: string[];
 }
 
 const OccupationalHealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible, diagnoses } : Props) => {
   const [description, setDescription] = useState<string>("");
-  const [date, setDate] = useState<string>("");
+  const [date, setDate] = useState<string>("2024-01-01");
   const [specialist, setSpecialist] = useState<string>("");
   const [employerName, setEmployerName] = useState<string>("");
   const [sickLeaveStartDate, setSickLeaveStartDate] = useState<string>("");
   const [sickLeaveEndDate, setSickLeaveEndDate] = useState<string>("");
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+  const [selectedDiagCodes, setSelectedDiagCodes] = useState<string[]>([]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -31,13 +31,13 @@ const OccupationalHealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible,
         endDate: sickLeaveEndDate
       };
       submitNewEntry({
-        type, description, date, specialist, employerName, sickLeave, diagnosisCodes
+        type, description, date, specialist, employerName, sickLeave, diagnosisCodes: selectedDiagCodes
+      });
+    } else {
+      submitNewEntry({
+        type, description, date, specialist, employerName, diagnosisCodes: selectedDiagCodes
       });
     }
-    
-    submitNewEntry({
-      type, description, date, specialist, employerName, diagnosisCodes
-    });
   };
 
   const handleCancel = (event: SyntheticEvent) => {
@@ -46,15 +46,18 @@ const OccupationalHealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible,
     setEntryFormVisible(false);
   };
 
-  const parseDiagnosisCodes = (diagnosisCodes: string) => {
-    setDiagnosisCodes(diagnosisCodes.split(","));
-  };
-
   const clearStates = () => {
     setDescription("");
     setDate("");
     setSpecialist("");
-    setDiagnosisCodes([]);
+    setSelectedDiagCodes([]);
+  };
+
+  const handleCodeChange = (event: SelectChangeEvent<typeof selectedDiagCodes>) => {
+    const { target: { value }, } = event;
+    setSelectedDiagCodes(
+      typeof value === "string" ? value.split(",") : value,
+    );
   };
 
   return (
@@ -71,6 +74,7 @@ const OccupationalHealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible,
           />
           <TextField
             label="Date"
+            type="date"
             fullWidth
             value={date}
             variant="standard"
@@ -92,25 +96,41 @@ const OccupationalHealthCheckEntryForm = ({ submitNewEntry, setEntryFormVisible,
           />
           <TextField
             label="Sick Leave Start Date"
+            type="date"
             fullWidth
             value={sickLeaveStartDate}
             variant="standard"
+            InputLabelProps={{shrink: true}}
             onChange={({ target }) => setSickLeaveStartDate(target.value)}
           />
           <TextField
             label="Sick Leave End Date"
+            type="date"
             fullWidth
             value={sickLeaveEndDate}
             variant="standard"
+            InputLabelProps={{shrink: true}}
             onChange={({ target }) => setSickLeaveEndDate(target.value)}
           />
           <TextField
             label="Diagnosis Codes"
+            select
             fullWidth
-            value={diagnosisCodes}
             variant="standard"
-            onChange={({ target }) => parseDiagnosisCodes(target.value)}
-          />
+            value={selectedDiagCodes}
+            SelectProps={{
+              multiple: true, 
+              renderValue: (selected) => (selected as string[]).join(", "),
+              onChange: (e) => handleCodeChange(e as SelectChangeEvent<string[]>)
+            }}
+          >
+            {diagnoses.map((diagnosis) => (
+              <MenuItem key={diagnosis} value={diagnosis}>
+                <Checkbox checked={selectedDiagCodes.indexOf(diagnosis) > -1} />
+                <ListItemText primary={diagnosis} />
+              </MenuItem>
+            ))}
+          </TextField>
           <Box p={1} display="flex" justifyContent="space-between">
             <Button
               sx={{ backgroundColor: "red" }}
